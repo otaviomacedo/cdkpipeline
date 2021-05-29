@@ -1,0 +1,23 @@
+-e .
+aws-cdk.aws-cloudformation
+aws-cdk.aws-codepipeline
+aws-cdk.aws-codepipeline-actions
+aws-cdk.aws-ecr
+aws-cdk.aws-ecr-assets
+aws-cdk.aws-s3
+aws-cdk.aws-s3-assets
+aws-cdk.aws-eks
+aws-cdk.aws-sqs
+aws-cdk.aws-ssm
+aws-cdk.aws-iam
+aws-cdk.core
+aws-cdk.cx-api
+aws-cdk.region-info
+aws-cdk.aws-codepipeline
+aws-cdk.aws-codepipeline-actions
+aws-cdk.pipelines
+boto3
+pyyaml
+numpy
+dictor
+setuptools

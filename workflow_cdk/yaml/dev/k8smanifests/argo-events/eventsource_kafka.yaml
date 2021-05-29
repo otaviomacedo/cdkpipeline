@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: kafka
+  namespace: argo
+spec:
+  kafka:
+    example:
+      # kafka broker url
+      url: kafka.argo.svc.cluster.local:9092
+      # name of the kafka topic
+      topic: topic-2
+      # jsonBody specifies that all event body payload coming from this
+      # source will be JSON
+      jsonBody: true
+      # partition id
+      partition: "0"
+      limitEventsPerSecond: 2
+      consumerGroup:
+        groupName: "argo-events"
+        olest: true
+        rebalanceStrategy: "roundrobin"
+      # # optional backoff time for connection retries.
+      # # if not provided, default connection backoff time will be used.
+      # connectionBackoff:
+      #   # duration in nanoseconds, or strings like "3s", "2m". following value is 10 seconds
+      #   duration: 10s
+      #   # how many backoffs
+      #   steps: 5
+      #   # factor to increase on each step.
+      #   # setting factor > 1 makes backoff exponential.
+      #   factor: 2
+      #   jitter: 0.2
+#      Use a consumer group, if this is used you do not need to specify a "partition: <id>"
+#      consumerGroup:
+#        groupName: test-group
+#        oldest: false
+#        rebalanceStrategy: range
+#      limitEventsPerSecond: 1
+#      version: "2.5.0"
+
+#    example-tls:
+#      url: "kafka.argo-events:9092"
+#      topic: "topic-2"
+#      jsonBody: true
+#      partition: "1"
+#      tls:
+#        caCertSecret:
+#          name: my-secret
+#          key: ca-cert-key
+#        clientCertSecret:
+#          name: my-secret
+#          key: client-cert-key
+#        clientKeySecret:
+#          name: my-secret
+#          key: client-key-key

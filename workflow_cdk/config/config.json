@@ -1,0 +1,92 @@
+{
+  "dev": {
+    "AWSAccountID": "711208530951",
+    "AWSProfileName": "dev",
+    "AWSProfileRegion": "us-west-2",
+    "vpc": {
+      "cidr": "10.0.0.0/16"
+    },
+    "eks": {
+      "admin_username": "wmp-eks-cluster-admin",
+      "admin_password": "Tu$imple1231qaz!QAZ2wsx@WSX",
+      "cluster_name": "wmp-eks-cluster",
+      "nodegroup": {
+        "instance_type": "t3.large",
+        "disk_size": 50,
+        "min_size": 2,
+        "max_size": 4,
+        "desired_size": 2
+      }
+    },
+    "argo-workflow": {
+      "release": "argo-workflow",
+      "valuesPath": "workflow_cdk/yaml/dev/helm/argo-workflows/values.yaml",
+      "manifests": [
+        "workflow_cdk/yaml/dev/k8smanifests/argo-workflows/namespaces.yaml"
+      ]
+    },
+    "argo-events": {
+      "release": "argo-events",
+      "valuesPath": "workflow_cdk/yaml/dev/helm/argo-events/values.yaml"
+    },
+    "kafka": {
+      "release": "kafka",
+      "valuesPath": "workflow_cdk/yaml/dev/helm/kafka/values.yaml"
+    },
+    "manifests": {
+      "files": [
+        "workflow_cdk/yaml/dev/k8smanifests/argo-events/events_role.yaml",
+        "workflow_cdk/yaml/dev/k8smanifests/argo-events/workflows_role.yaml",
+        "workflow_cdk/yaml/dev/k8smanifests/argo-events/eventbus.yaml",
+        "workflow_cdk/yaml/dev/k8smanifests/argo-events/sensor.yaml",
+        "workflow_cdk/yaml/dev/k8smanifests/argo-events/eventsource_webhook.yaml",
+        "workflow_cdk/yaml/dev/k8smanifests/argo-events/eventsource_kafka.yaml"
+      ]
+    }
+  },
+  "test": {
+    "AWSAccountID": "182732313984",
+    "AWSProfileName": "test",
+    "AWSProfileRegion": "us-west-2",
+    "vpc": {
+      "cidr": "10.0.0.0/16"
+    },
+    "eks": {
+      "admin_username": "wmp-eks-cluster-admin",
+      "admin_password": "Tu$imple1231qaz!QAZ2wsx@WSX",
+      "cluster_name": "wmp-eks-cluster",
+      "nodegroup": {
+        "instance_type": "t3.large",
+        "disk_size": 50,
+        "min_size": 2,
+        "max_size": 4,
+        "desired_size": 2
+      }
+    },
+    "argo-workflow": {
+      "release": "argo-workflow",
+      "valuesPath": "workflow_cdk/yaml/test/helm/argo-workflows/values.yaml",
+      "manifests": [
+        "workflow_cdk/yaml/test/k8smanifests/argo-workflows/namespaces.yaml"
+      ]
+    },
+    "argo-events": {
+      "release": "argo-events",
+      "valuesPath": "workflow_cdk/yaml/test/helm/argo-events/values.yaml"
+    },
+    "kafka": {
+      "release": "kafka",
+      "valuesPath": "workflow_cdk/yaml/test/helm/kafka/values.yaml"
+    },
+    "manifests": {
+      "files": [
+        "workflow_cdk/yaml/test/k8smanifests/argo-events/events_role.yaml",
+        "workflow_cdk/yaml/test/k8smanifests/argo-events/workflows_role.yaml",
+        "workflow_cdk/yaml/test/k8smanifests/argo-events/eventbus.yaml",
+        "workflow_cdk/yaml/test/k8smanifests/argo-events/sensor.yaml",
+        "workflow_cdk/yaml/test/k8smanifests/argo-events/eventsource_webhook.yaml",
+        "workflow_cdk/yaml/test/k8smanifests/argo-events/eventsource_kafka.yaml"
+      ]
+    }
+  }
+}

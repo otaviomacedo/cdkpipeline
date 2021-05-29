@@ -1,0 +1,108 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: argo-events-sensor
+  namespace: argo
+spec:
+  template:
+    serviceAccountName: operate-workflow-sa
+  dependencies:
+    - name: kafka
+      eventSourceName: kafka
+      eventName: example
+    - name: webhook
+      eventSourceName: webhook
+      eventName: example
+  triggers:
+    - template:
+        name: kafka-workflow-trigger
+        conditions: "kafka"
+        k8s:
+          group: argoproj.io
+          version: v1alpha1
+          resource: workflows
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: kafka-workflow-
+                namespace: workflows
+              spec:
+                entrypoint: whalesay
+                arguments:
+                  parameters:
+                  - name: message
+                    # this is the value that should be overridden
+                    value: hello world
+                templates:
+                - name: whalesay
+                  inputs:
+                    parameters:
+                    - name: message
+                  container:
+                    image: docker/whalesay:latest
+                    command: [cowsay]
+                    args: ["{{inputs.parameters.message}}"]
+          parameters:
+            - src:
+                dependencyName: kafka
+                dataTemplate: "{{ .Input.body.message}}"
+                # value: wow! a default value.
+              dest: spec.arguments.parameters.0.value
+    - template:
+        name: webhook-workflow-trigger
+        conditions: webhook
+        k8s:
+          group: argoproj.io
+          version: v1alpha1
+          resource: workflows
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: webhook-
+                namespace: workflows
+              spec:
+                entrypoint: whalesay
+                arguments:
+                  parameters:
+                  - name: message
+                  - name: subject
+                templates:
+                - name: whalesay
+                  inputs:
+                    parameters:
+                    - name: message
+                    - name: subject
+                  container:
+                    image: docker/whalesay:latest
+                    command: [cowsay]
+                    args: ["{{inputs.parameters.message}} from {{inputs.parameters.subject}}"]
+          # parameters:
+          #   - src:
+          #       dependencyName: webhook
+          #       # contextKey: type
+          #       dataKey: body.message
+          #       value: wow! a default value.
+          #     dest: spec.arguments.parameters.0.value
+          parameters:
+            # Retrieve the 'message' key from the payload
+            - src:
+                dependencyName: webhook
+                dataTemplate: "{{ .Input.body.message | title }}"
+              dest: spec.arguments.parameters.0.value
+            # Title case the context subject
+            - src:
+                dependencyName: webhook
+                contextTemplate: "{{ .Input.subject | title }}"
+              dest: spec.arguments.parameters.1.value
+            # Retrieve the 'name' key from the payload, remove all whitespace and lowercase it.
+            - src:
+                dependencyName: webhook
+                dataTemplate: "{{ .Input.body.name | nospace | lower }}-"
+              dest: metadata.generateName
+              operation: append
