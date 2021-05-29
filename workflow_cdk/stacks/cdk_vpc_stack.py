@@ -14,5 +14,5 @@ class CdkVpcStack(core.Stack):
         self.vpc = ec2.Vpc(
             self,
             "wmp-vpc",
-            cidr=config.getValue('cdk.cidr')
+            cidr=config.getValue('vpc.cidr')
         )
