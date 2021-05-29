@@ -1,0 +1,7 @@
+README.md
+setup.py
+wmp_cdk/wmp_cdk.egg-info/PKG-INFO
+wmp_cdk/wmp_cdk.egg-info/SOURCES.txt
+wmp_cdk/wmp_cdk.egg-info/dependency_links.txt
+wmp_cdk/wmp_cdk.egg-info/requires.txt
+wmp_cdk/wmp_cdk.egg-info/top_level.txt
