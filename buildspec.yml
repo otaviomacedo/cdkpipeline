@@ -1,6 +1,8 @@
 version: 0.2
 
-#env:
+env:
+  compute-type: build.general1.small
+  image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
   #variables:
      # key: "There are no variables"
   #parameter-store:
@@ -19,7 +21,7 @@ phases:
       - pip install -r requirements.txt
       - pip install -e .
   build:
-    commands:
+#    commands:
 #      - pytest tests/unit/
 #      - pytest tests/integration/ -rfs
   post_build:
