@@ -1,34 +1,38 @@
-# Buildspec Reference Doc: https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
-
 version: 0.2
+
+env:
+  compute-type: build.general1.small
+  image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
+  #variables:
+     # key: "There are no variables"
+  #parameter-store:
+     # key: "There are no variables"
 
 phases:
   install:
-    commands:
-      - echo "[+] Scanning for security vulnerability within dependencies"
-      # - pipenv check (if pipenv is installed and a Pipfile is in place)
-      # - Alternatively: https://www.owasp.org/index.php/OWASP_Dependency_Check
+    #If you use the Ubuntu standard image 2.0 or later, you must specify runtime-versions.
+    #If you specify runtime-versions and use an image other than Ubuntu standard image 2.0, the build fails.
+    runtime-versions:
+       python: 3.7
+    #commands:
+      # - There are no build commands
   pre_build:
     commands:
-      - pip install pytest requests
-      - echo "[+] Running tests..."
-      - python -m pytest tests/ -v
-  build:
-    commands:
-      - echo "[+] Installing dependencies...."
       - pip install -r requirements.txt
-      - echo "Starting SAM packaging `date` in `pwd`"
-      - cdk ls
-#      - aws cloudformation package --template-file template.yaml --s3-bucket $BUILD_OUTPUT_BUCKET --output-template-file packaged.yaml
-  post_build:
-    commands:
-      - echo "SAM packaging completed on `date`"
-
+      - pip install -e .
+#  build:
+#    commands:
+#      - pytest tests/unit/
+#      - pytest tests/integration/ -rfs
+#  post_build:
+#    commands:
+#      - python setup.py
 #artifacts:
-#  files:
-#    - packaged.yaml
-#  discard-paths: yes
-
-cache:
-  paths:
-    - '/root/.cache/pip'
+  #files:
+    # - We don't currently preserve any artifacts
+  #name: $(date +%Y-%m-%d)
+  #discard-paths: yes
+  #base-directory: location
+#cache:
+  #paths:
+    # - We don't currently cache anything
