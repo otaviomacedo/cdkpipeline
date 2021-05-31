@@ -20,59 +20,59 @@ from workflow_cdk.stacks.cdk_eks_stack import CdkEksStack
 from workflow_cdk.stacks.cdk_kafka_stack import CdkKafkaStack
 
 app = core.App()
-
-config = WmpConfig('workflow_cdk/config/config.json', app.node.try_get_context('config'))
-env = core.Environment(
-    account=config.getValue('AWSAccountID'),
-    region=config.getValue('AWSProfileRegion')
-)
-vpc_stack = CdkVpcStack(
-    app, "wmp-vpc",
-    config=config,
-    env=env)
-
-eks_stack = CdkEksStack(
-    app, 'wmp-eks',
-    vpc=vpc_stack.vpc,
-    config=config,
-    env=env)
-eks_stack.add_dependency(vpc_stack)
-
-kafka_stack = CdkKafkaStack(
-    app, 'wmp-kafka',
-    eks_stack=eks_stack,
-    config=config,
-    env=env)
-kafka_stack.add_dependency(eks_stack)
-
-argo_workflows_stack = CdkArgoWorkflowsStack(
-    app, 'wmp-argo-workflows',
-    eks_stack=eks_stack,
-    config=config,
-    env=env)
-argo_workflows_stack.add_dependency(eks_stack)
-
-argo_events_stack = CdkArgoEventsStack(
-    app, 'wmp-argo-events',
-    eks_stack=eks_stack,
-    config=config,
-    env=env)
-argo_events_stack.add_dependency(argo_workflows_stack)
-argo_events_stack.add_dependency(kafka_stack)
-
-manifests_stack = CdkManifestsStack(
-    app, 'wmp-manifests',
-    eks_stack=eks_stack,
-    config=config,
-    env=env)
-manifests_stack.add_dependency(argo_events_stack)
-
-# WmpPipelineStack(
-#     app,
-#     'WmpPipelineStack',
-#     # env=core.Environment(
-#     #     account='182732313984',
-#     #     region='us-west-2'
-#     # )
+#
+# config = WmpConfig('workflow_cdk/config/config.json', app.node.try_get_context('config'))
+# env = core.Environment(
+#     account=config.getValue('AWSAccountID'),
+#     region=config.getValue('AWSProfileRegion')
 # )
+# vpc_stack = CdkVpcStack(
+#     app, "wmp-vpc",
+#     config=config,
+#     env=env)
+#
+# eks_stack = CdkEksStack(
+#     app, 'wmp-eks',
+#     vpc=vpc_stack.vpc,
+#     config=config,
+#     env=env)
+# eks_stack.add_dependency(vpc_stack)
+#
+# kafka_stack = CdkKafkaStack(
+#     app, 'wmp-kafka',
+#     eks_stack=eks_stack,
+#     config=config,
+#     env=env)
+# kafka_stack.add_dependency(eks_stack)
+#
+# argo_workflows_stack = CdkArgoWorkflowsStack(
+#     app, 'wmp-argo-workflows',
+#     eks_stack=eks_stack,
+#     config=config,
+#     env=env)
+# argo_workflows_stack.add_dependency(eks_stack)
+#
+# argo_events_stack = CdkArgoEventsStack(
+#     app, 'wmp-argo-events',
+#     eks_stack=eks_stack,
+#     config=config,
+#     env=env)
+# argo_events_stack.add_dependency(argo_workflows_stack)
+# argo_events_stack.add_dependency(kafka_stack)
+#
+# manifests_stack = CdkManifestsStack(
+#     app, 'wmp-manifests',
+#     eks_stack=eks_stack,
+#     config=config,
+#     env=env)
+# manifests_stack.add_dependency(argo_events_stack)
+
+WmpPipelineStack(
+    app,
+    'WmpPipelineStack',
+    env=core.Environment(
+        account='182732313984',
+        region='us-west-2'
+    )
+)
 app.synth()
