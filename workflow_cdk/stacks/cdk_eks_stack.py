@@ -25,24 +25,6 @@ class CdkEksStack(core.Stack):
                     effect=iam.Effect.ALLOW,
                     actions=['eks:*'],
                     resources=['*']
-                ),
-                iam.PolicyStatement(
-                    sid='S3FullAccess',
-                    effect=iam.Effect.ALLOW,
-                    actions=[
-                        "iam:*",
-                        "organizations:DescribeAccount",
-                        "organizations:DescribeOrganization",
-                        "organizations:DescribeOrganizationalUnit",
-                        "organizations:DescribePolicy",
-                        "organizations:ListChildren",
-                        "organizations:ListParents",
-                        "organizations:ListPoliciesForTarget",
-                        "organizations:ListRoots",
-                        "organizations:ListPolicies",
-                        "organizations:ListTargetsForPolicy"
-                    ],
-                    resources=['*']
                 )
             ],
             users=[eks_uer]

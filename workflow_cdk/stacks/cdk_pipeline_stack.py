@@ -213,7 +213,7 @@ class WmpPipelineStack(cdk.Stack):
         teststage = pipeline.add_application_stage(
             WmpApplicationStage(
                 self,
-                'test-stage',
+                'alpha-stage',
                 config=WmpConfig('workflow_cdk/config/config.json', 'test')
             ),
             manual_approvals=True
