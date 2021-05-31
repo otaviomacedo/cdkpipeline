@@ -14,7 +14,7 @@ class CdkEksStack(core.Stack):
         eks_uer = iam.User(
             self, id="wmp-eks-user",
             user_name=config.getValue('eks.admin_username'),
-            password=core.SecretValue.plain_text(config.getValue('eks.admin_password')) # this needs to be put in KMS
+            password=core.SecretValue.plain_text(config.getValue('eks.admin_password'))  # this needs to be put in KMS
         )
         iam.Policy(
             self, id='wmp-eks-policy',
@@ -24,6 +24,24 @@ class CdkEksStack(core.Stack):
                     sid='EKSFullAccess',
                     effect=iam.Effect.ALLOW,
                     actions=['eks:*'],
+                    resources=['*']
+                ),
+                iam.PolicyStatement(
+                    sid='S3FullAccess',
+                    effect=iam.Effect.ALLOW,
+                    actions=[
+                        "iam:*",
+                        "organizations:DescribeAccount",
+                        "organizations:DescribeOrganization",
+                        "organizations:DescribeOrganizationalUnit",
+                        "organizations:DescribePolicy",
+                        "organizations:ListChildren",
+                        "organizations:ListParents",
+                        "organizations:ListPoliciesForTarget",
+                        "organizations:ListRoots",
+                        "organizations:ListPolicies",
+                        "organizations:ListTargetsForPolicy"
+                    ],
                     resources=['*']
                 )
             ],
