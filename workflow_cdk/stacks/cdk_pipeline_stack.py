@@ -216,5 +216,5 @@ class WmpPipelineStack(cdk.Stack):
                 'alpha-stage',
                 config=WmpConfig('workflow_cdk/config/config.json', 'test')
             ),
-            manual_approvals=True
+            manual_approvals=False
         )

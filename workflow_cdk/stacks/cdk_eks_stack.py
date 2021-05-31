@@ -40,7 +40,9 @@ class CdkEksStack(core.Stack):
             ]
         )
         self.cluster = eks.Cluster(
-            self, id='wmp-eks-cluster', cluster_name=config.getValue('eks.cluster_name'),
+            self, id='wmp-eks-cluster',
+            # cluster_name=config.getValue('eks.cluster_name'),
+            cluster_name='eks-cluster',
             version=eks.KubernetesVersion.V1_19,
             vpc=vpc,
             vpc_subnets=[ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE)],
