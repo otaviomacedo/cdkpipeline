@@ -16,7 +16,7 @@ class CdkEksStack(core.Stack):
             user_name=config.getValue('eks.admin_username'),
             password=core.SecretValue.plain_text(config.getValue('eks.admin_password'))  # this needs to be put in KMS
         )
-        iam.Policy(
+        policy = iam.Policy(
             self, id='wmp-eks-policy',
             policy_name='EKSFullAccessPolicy',
             statements=[
@@ -37,6 +37,9 @@ class CdkEksStack(core.Stack):
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name="AdministratorAccess"),
                 iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonS3FullAccess')
+            ],
+            inline_policies=[
+                policy
             ]
         )
         self.cluster = eks.Cluster(
