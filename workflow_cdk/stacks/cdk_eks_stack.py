@@ -23,7 +23,7 @@ class CdkEksStack(core.Stack):
                 iam.PolicyStatement(
                     sid='EKSFullAccess',
                     effect=iam.Effect.ALLOW,
-                    actions=['eks:*'],
+                    actions=['*'],
                     resources=['*']
                 )
             ],
