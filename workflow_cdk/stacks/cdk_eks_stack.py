@@ -4,6 +4,7 @@ from aws_cdk import (
     aws_ec2 as ec2,
     aws_iam as iam
 )
+from aws_cdk.aws_iam import PolicyDocument
 
 from utils.configBuilder import WmpConfig
 
@@ -38,9 +39,16 @@ class CdkEksStack(core.Stack):
                 iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name="AdministratorAccess"),
                 iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonS3FullAccess')
             ],
-            inline_policies=[
-                policy
-            ]
+            inline_policies={
+                'policy': PolicyDocument(assign_sids=True, statements=[
+                    iam.PolicyStatement(
+                        sid='EKSFullAccess',
+                        effect=iam.Effect.ALLOW,
+                        actions=['*'],
+                        resources=['*']
+                    )
+                ])
+            }
         )
         self.cluster = eks.Cluster(
             self, id='wmp-eks-cluster',
