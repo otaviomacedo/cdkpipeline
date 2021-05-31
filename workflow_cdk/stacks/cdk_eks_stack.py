@@ -24,7 +24,7 @@ class CdkEksStack(core.Stack):
                 iam.PolicyStatement(
                     sid='EKSFullAccess',
                     effect=iam.Effect.ALLOW,
-                    actions=['*'],
+                    actions=['eks:*'],
                     resources=['*']
                 )
             ],
@@ -43,7 +43,15 @@ class CdkEksStack(core.Stack):
                 iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name="AdministratorAccess"),
                 iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonS3FullAccess'),
                 iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonEKSClusterPolicy'),
-            ]
+            ],
+            inline_policies={
+                'KMSFullAccess': iam.PolicyStatement(
+                    sid='EKSFullAccess',
+                    effect=iam.Effect.ALLOW,
+                    actions=['kms*'],
+                    resources=['*']
+                )
+            }
         )
 
         self.cluster = eks.Cluster(
