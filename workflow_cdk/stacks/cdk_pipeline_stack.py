@@ -54,7 +54,7 @@ class WmpPipelineStack(cdk.Stack):
                     'cdk synth'
                 ]
             ),
-            self_mutating=False
+            self_mutating=True
         )
 
         #
