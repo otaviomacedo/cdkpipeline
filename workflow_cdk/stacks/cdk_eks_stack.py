@@ -47,7 +47,8 @@ class CdkEksStack(core.Stack):
             vpc=vpc,
             vpc_subnets=[ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE)],
             default_capacity=0,
-            masters_role=eks_role
+            masters_role=eks_role,
+            role=eks_role
         )
 
         self.cluster.add_nodegroup_capacity(
