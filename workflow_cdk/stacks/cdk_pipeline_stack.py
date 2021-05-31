@@ -13,6 +13,7 @@ from aws_cdk import (core,
                      aws_codebuild as codebuild,
                      aws_codecommit as codecommit,
                      aws_iam as iam,
+                     aws_s3 as s3,
                      aws_codepipeline as codepipeline,
                      aws_codepipeline_actions as codepipeline_actions,
                      pipelines)
@@ -38,8 +39,9 @@ class WmpPipelineStack(cdk.Stack):
         #
         # codePipeline = codepipeline.Pipeline(
         #     self,
-        #     'Wmp-Codepipeline',
-        #     pipeline_name='Wmp-Codepipeline'
+        #     'Wmp-CodePipeline',
+        #     pipeline_name='Wmp-CodePipeline',
+        #     artifact_bucket=s3.Bucket(self, 'artifact_bucket', encryption=s3.BucketEncryption.KMS)
         # )
         #
         # sourceStage = codePipeline.add_stage(stage_name='Source', actions=[
@@ -48,7 +50,6 @@ class WmpPipelineStack(cdk.Stack):
         #         output=source_artifact,
         #         oauth_token=SecretValue.plain_text('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'),
         #         trigger=codepipeline_actions.GitHubTrigger.POLL,
-        #         # Replace these with your actual GitHub project info
         #         owner="uxth",
         #         repo="cdkpipeline",
         #         branch='main'
@@ -72,55 +73,7 @@ class WmpPipelineStack(cdk.Stack):
         #     ],
         #     placement=StagePlacement(just_after=sourceStage)
         # )
-        #
-        # class DeployStack(Stack):
-        #     def __init__(self, scope: core.Construct, id: str, config: WmpConfig, **kwargs):
-        #         super().__init__(scope, id, **kwargs)
-        #         env = Environment(
-        #             account=config.getValue('AWSAccountID'),
-        #             region=config.getValue('AWSProfileRegion')
-        #         )
-        #         vpc_stack = CdkVpcStack(
-        #             self, "wmp-vpc",
-        #             config=config,
-        #             env=env)
-        #
-        #         eks_stack = CdkEksStack(
-        #             self, 'wmp-eks',
-        #             vpc=vpc_stack.vpc,
-        #             config=config,
-        #             env=env)
-        #         eks_stack.add_dependency(vpc_stack)
-        #
-        #         kafka_stack = CdkKafkaStack(
-        #             self, 'wmp-kafka',
-        #             eks_stack=eks_stack,
-        #             config=config,
-        #             env=env)
-        #         kafka_stack.add_dependency(eks_stack)
-        #
-        #         argo_workflows_stack = CdkArgoWorkflowsStack(
-        #             self, 'wmp-argo-workflows',
-        #             eks_stack=eks_stack,
-        #             config=config,
-        #             env=env)
-        #         argo_workflows_stack.add_dependency(eks_stack)
-        #
-        #         argo_events_stack = CdkArgoEventsStack(
-        #             self, 'wmp-argo-events',
-        #             eks_stack=eks_stack,
-        #             config=config,
-        #             env=env)
-        #         argo_events_stack.add_dependency(argo_workflows_stack)
-        #         argo_events_stack.add_dependency(kafka_stack)
-        #
-        #         manifests_stack = CdkManifestsStack(
-        #             self, 'wmp-manifests',
-        #             eks_stack=eks_stack,
-        #             config=config,
-        #             env=env)
-        #         manifests_stack.add_dependency(argo_events_stack)
-        #
+
         # teststage = codePipeline.add_stage(
         #     stage_name='Deploy',
         #     actions=[
@@ -139,6 +92,15 @@ class WmpPipelineStack(cdk.Stack):
         #             run_order=3
         #         )
         #     ]
+        # )
+        #
+
+        # pipeline = CdkPipeline(
+        #     self, "Wmp-CdkPipeline",
+        #     pipeline_name='Vmp-CdkPipeline',
+        #     cloud_assembly_artifact=cloud_assembly_artifact,
+        #     code_pipeline=codePipeline,
+        #     self_mutating=False
         # )
         #
         pipeline = CdkPipeline(
