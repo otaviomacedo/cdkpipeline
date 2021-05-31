@@ -33,33 +33,27 @@ class CdkEksStack(core.Stack):
 
         eks_role = iam.Role(
             self, id="wmp-eks-admin",
-            assumed_by=iam.ArnPrincipal(arn=eks_uer.user_arn),
+            # assumed_by=iam.ArnPrincipal(arn=eks_uer.user_arn),
+            assumed_by=iam.CompositePrincipal(
+                iam.ServicePrincipal('eks.amazonaws.com'),
+                iam.ArnPrincipal(arn=eks_uer.user_arn)
+            ),
             role_name='wmp-eks-cluster-role',
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name="AdministratorAccess"),
-                iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonS3FullAccess')
-            ],
-            inline_policies={
-                'policy': PolicyDocument(assign_sids=True, statements=[
-                    iam.PolicyStatement(
-                        sid='EKSFullAccess',
-                        effect=iam.Effect.ALLOW,
-                        actions=['*'],
-                        resources=['*']
-                    )
-                ])
-            }
+                iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonS3FullAccess'),
+                iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonEKSClusterPolicy'),
+            ]
         )
+
         self.cluster = eks.Cluster(
             self, id='wmp-eks-cluster',
-            # cluster_name=config.getValue('eks.cluster_name'),
-            cluster_name='eks-cluster',
+            cluster_name=config.getValue('eks.cluster_name'),
             version=eks.KubernetesVersion.V1_19,
             vpc=vpc,
             vpc_subnets=[ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE)],
             default_capacity=0,
-            masters_role=eks_role,
-            role=eks_role
+            masters_role=eks_role
         )
 
         self.cluster.add_nodegroup_capacity(
