@@ -8,7 +8,6 @@ aws-cdk.aws-s3
 aws-cdk.aws-s3-assets
 aws-cdk.aws-eks
 aws-cdk.aws-sqs
-aws-cdk.aws-ssm
 aws-cdk.aws-iam
 aws-cdk.core
 aws-cdk.cx-api

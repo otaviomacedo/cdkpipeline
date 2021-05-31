@@ -143,7 +143,7 @@ class WmpPipelineStack(cdk.Stack):
         #
         pipeline = CdkPipeline(
             self, "Pipeline",
-            pipeline_name="Wmp-Pipeline",
+            pipeline_name="Wmp-Codepipeline",
             cloud_assembly_artifact=cloud_assembly_artifact,
             source_action=codepipeline_actions.GitHubSourceAction(
                 action_name="GitHub_SourceCode_Download",
