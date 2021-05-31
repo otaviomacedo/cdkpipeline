@@ -7,8 +7,9 @@
 
 
 from aws_cdk import core
-from utils.configBuilder import WmpConfig
+from aws_cdk.core import Stack, Environment
 
+from utils.configBuilder import WmpConfig
 
 from workflow_cdk.stacks.cdk_argo_events_stack import CdkArgoEventsStack
 from workflow_cdk.stacks.cdk_argo_workflows_stack import CdkArgoWorkflowsStack
@@ -19,6 +20,8 @@ from workflow_cdk.stacks.cdk_eks_stack import CdkEksStack
 from workflow_cdk.stacks.cdk_kafka_stack import CdkKafkaStack
 
 app = core.App()
+
+
 #
 # config = WmpConfig('workflow_cdk/config/config.json', app.node.try_get_context('config'))
 # env = core.Environment(
@@ -66,5 +69,13 @@ app = core.App()
 #     env=env)
 # manifests_stack.add_dependency(argo_events_stack)
 
-WmpPipelineStack(app, 'WmpPipelineStack',env=core.Environment(account='182732313984', region='us-west-2'))
+
+WmpPipelineStack(
+    app,
+    'WmpPipelineStack',
+    # env=core.Environment(
+    #     account='182732313984',
+    #     region='us-west-2'
+    # )
+)
 app.synth()
