@@ -69,6 +69,7 @@ class CdkEksStack(core.Stack):
             default_capacity=0,
             masters_role=eks_role
         )
+        self.cluster.aws_auth.add_masters_role(eks_role)
 
         self.cluster.add_nodegroup_capacity(
             'wmp-eks-nodegroup',

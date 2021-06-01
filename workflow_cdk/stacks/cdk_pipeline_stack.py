@@ -46,7 +46,11 @@ class WmpPipelineStack(cdk.Stack):
             role=iam.Role(
                 self,
                 'Codepipeline-Role',
-                assumed_by=iam.ServicePrincipal('codepipeline.amazonaws.com'),
+                assumed_by=iam.CompositePrincipal(
+                    iam.ServicePrincipal('eks.amazonaws.com'),
+                    iam.ServicePrincipal('s3.amazonaws.com'),
+                    iam.ServicePrincipal('codepipeline.amazonaws.com')
+                ),
                 role_name='wmp-pipeline-role',
                 managed_policies=[
                     iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonS3FullAccess')
@@ -104,7 +108,6 @@ class WmpPipelineStack(cdk.Stack):
         #     ]
         # )
         #
-
 
         pipeline = CdkPipeline(
             self, "Wmp-CdkPipeline1",
