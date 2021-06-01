@@ -6,6 +6,7 @@ from aws_cdk import core as cdk
 # being updated to use `cdk`.  You may delete this import if you don't need it.
 from aws_cdk.aws_codepipeline import StagePlacement
 from aws_cdk.aws_codepipeline_actions import ManualApprovalAction
+from aws_cdk.aws_iam import PolicyDocument
 from aws_cdk.core import SecretValue, Environment, Stage, Stack
 from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction, ShellScriptAction, AdditionalArtifact
 
@@ -16,7 +17,7 @@ from aws_cdk import (core,
                      aws_s3 as s3,
                      aws_codepipeline as codepipeline,
                      aws_codepipeline_actions as codepipeline_actions,
-                     pipelines)
+                     )
 
 from utils.configBuilder import WmpConfig
 from workflow_cdk.stacks.cdk_argo_events_stack import CdkArgoEventsStack
@@ -37,44 +38,53 @@ class WmpPipelineStack(cdk.Stack):
         source_artifact = codepipeline.Artifact()
         cloud_assembly_artifact = codepipeline.Artifact()
         #
-        # codePipeline = codepipeline.Pipeline(
-        #     self,
-        #     'Wmp-CodePipeline',
-        #     pipeline_name='Wmp-CodePipeline',
-        #     artifact_bucket=s3.Bucket(self, 'artifact_bucket', encryption=s3.BucketEncryption.KMS)
-        # )
-        #
-        # sourceStage = codePipeline.add_stage(stage_name='Source', actions=[
-        #     codepipeline_actions.GitHubSourceAction(
-        #         action_name="GitHub_SourceCode_Download",
-        #         output=source_artifact,
-        #         oauth_token=SecretValue.plain_text('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'),
-        #         trigger=codepipeline_actions.GitHubTrigger.POLL,
-        #         owner="uxth",
-        #         repo="cdkpipeline",
-        #         branch='main'
-        #     )
-        # ])
-        #
-        # buildStage = codePipeline.add_stage(
-        #     stage_name='Build',
-        #     actions=[
-        #         SimpleSynthAction(
-        #             synth_command='cdk synth',
-        #             cloud_assembly_artifact=cloud_assembly_artifact,
-        #             source_artifact=source_artifact,
-        #             install_commands=[
-        #                 "npm install -g aws-cdk",
-        #                 "pip install -r requirements.txt",
-        #                 "python setup.py install",
-        #                 'cdk synth'
-        #             ]
-        #         )
-        #     ],
-        #     placement=StagePlacement(just_after=sourceStage)
-        # )
+        cpp = codepipeline.Pipeline(
+            self,
+            'Wmp-CodePipeline',
+            pipeline_name='Wmp-Codepipeline',
+            # artifact_bucket=s3.Bucket(self, 'artifact_bucket', encryption=s3.BucketEncryption.KMS),
+            role=iam.Role(
+                self,
+                'Codepipeline-Role',
+                assumed_by=iam.ServicePrincipal('codepipeline.amazonaws.com'),
+                role_name='wmp-pipeline-role',
+                managed_policies=[
+                    iam.ManagedPolicy.from_aws_managed_policy_name(managed_policy_name='AmazonS3FullAccess')
+                ]
+            )
+        )
 
-        # teststage = codePipeline.add_stage(
+        #
+        sourceStage = cpp.add_stage(stage_name='Source', actions=[
+            codepipeline_actions.GitHubSourceAction(
+                action_name="GitHub_SourceCode_Download",
+                output=source_artifact,
+                oauth_token=SecretValue.plain_text('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'),
+                trigger=codepipeline_actions.GitHubTrigger.POLL,
+                owner="uxth",
+                repo="cdkpipeline",
+                branch='main'
+            )
+        ])
+        #
+        buildStage = cpp.add_stage(
+            stage_name='Build',
+            actions=[
+                SimpleSynthAction(
+                    synth_command='cdk synth',
+                    cloud_assembly_artifact=cloud_assembly_artifact,
+                    source_artifact=source_artifact,
+                    install_commands=[
+                        "npm install -g aws-cdk",
+                        "pip install -r requirements.txt",
+                        "python setup.py install"
+                    ]
+                )
+            ],
+            placement=StagePlacement(just_after=sourceStage)
+        )
+
+        # teststage = cpp.add_stage(
         #     stage_name='Deploy',
         #     actions=[
         #         codepipeline_actions.CloudFormationCreateUpdateStackAction(
@@ -95,40 +105,40 @@ class WmpPipelineStack(cdk.Stack):
         # )
         #
 
-        # pipeline = CdkPipeline(
-        #     self, "Wmp-CdkPipeline",
-        #     pipeline_name='Vmp-CdkPipeline',
-        #     cloud_assembly_artifact=cloud_assembly_artifact,
-        #     code_pipeline=codePipeline,
-        #     self_mutating=False
-        # )
-        #
+
         pipeline = CdkPipeline(
-            self, "Pipeline",
-            pipeline_name="Wmp-Codepipeline",
+            self, "Wmp-CdkPipeline1",
             cloud_assembly_artifact=cloud_assembly_artifact,
-            source_action=codepipeline_actions.GitHubSourceAction(
-                action_name="GitHub_SourceCode_Download",
-                output=source_artifact,
-                oauth_token=SecretValue.plain_text('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'),
-                trigger=codepipeline_actions.GitHubTrigger.POLL,
-                owner="uxth",
-                repo="cdkpipeline",
-                branch='main'
-            ),
-            synth_action=SimpleSynthAction(
-                synth_command='cdk synth',
-                cloud_assembly_artifact=cloud_assembly_artifact,
-                source_artifact=source_artifact,
-                install_commands=[
-                    "npm install -g aws-cdk",
-                    "pip install -r requirements.txt",
-                    "python setup.py install",
-                    'cdk synth'
-                ]
-            ),
+            code_pipeline=cpp,
             self_mutating=False
         )
+        #
+        # pipeline = CdkPipeline(
+        #     self, "Pipeline",
+        #     pipeline_name="Wmp-Codepipeline",
+        #     cloud_assembly_artifact=cloud_assembly_artifact,
+        #     source_action=codepipeline_actions.GitHubSourceAction(
+        #         action_name="GitHub_SourceCode_Download",
+        #         output=source_artifact,
+        #         oauth_token=SecretValue.plain_text('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'),
+        #         trigger=codepipeline_actions.GitHubTrigger.POLL,
+        #         owner="uxth",
+        #         repo="cdkpipeline",
+        #         branch='main'
+        #     ),
+        #     synth_action=SimpleSynthAction(
+        #         synth_command='cdk synth',
+        #         cloud_assembly_artifact=cloud_assembly_artifact,
+        #         source_artifact=source_artifact,
+        #         install_commands=[
+        #             "npm install -g aws-cdk",
+        #             "pip install -r requirements.txt",
+        #             "python setup.py install",
+        #             'cdk synth'
+        #         ]
+        #     ),
+        #     self_mutating=False
+        # )
 
         #
         # buildRole = iam.Role(self, 'buildRole', assumed_by=iam.ServicePrincipal('codebuild.amazonaws.com'))
