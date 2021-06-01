@@ -12,7 +12,7 @@ from utils.configBuilder import WmpConfig
 class CdkEksStack(core.Stack):
     def __init__(self, scope: core.Construct, construct_id: str, vpc: ec2.Vpc, config: WmpConfig, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-        eks_uer = iam.User(
+        eks_user = iam.User(
             self, id="wmp-eks-user",
             user_name=config.getValue('eks.admin_username'),
             password=core.SecretValue.plain_text(config.getValue('eks.admin_password'))  # this needs to be put in KMS
@@ -28,16 +28,16 @@ class CdkEksStack(core.Stack):
                     resources=['*']
                 )
             ],
-            users=[eks_uer]
+            users=[eks_user]
         )
 
         eks_role = iam.Role(
             self, id="wmp-eks-admin",
-            # assumed_by=iam.ArnPrincipal(arn=eks_uer.user_arn),
+            # assumed_by=iam.ArnPrincipal(arn=eks_user.user_arn),
             assumed_by=iam.CompositePrincipal(
                 iam.ServicePrincipal('eks.amazonaws.com'),
                 iam.ServicePrincipal('s3.amazonaws.com'),
-                iam.ArnPrincipal(arn=eks_uer.user_arn)
+                iam.ArnPrincipal(arn=eks_user.user_arn)
             ),
             role_name='wmp-eks-cluster-role',
             managed_policies=[
