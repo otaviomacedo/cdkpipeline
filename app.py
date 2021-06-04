@@ -71,7 +71,7 @@ WmpPipelineStack(
     app,
     'WmpPipelineStack',
     env=core.Environment(
-        account='182732313984',
+        account='280619947791',
         region='us-west-2'
     )
 )

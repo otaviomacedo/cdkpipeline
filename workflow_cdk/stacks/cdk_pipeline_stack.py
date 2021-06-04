@@ -63,7 +63,7 @@ class WmpPipelineStack(cdk.Stack):
             codepipeline_actions.GitHubSourceAction(
                 action_name="GitHub_SourceCode_Download",
                 output=source_artifact,
-                oauth_token=SecretValue.plain_text('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'),
+                oauth_token=SecretValue.secrets_manager('triage'),
                 trigger=codepipeline_actions.GitHubTrigger.POLL,
                 owner="uxth",
                 repo="cdkpipeline",

@@ -1,6 +1,6 @@
 {
   "dev": {
-    "AWSAccountID": "711208530951",
+    "AWSAccountID": "280619947791",
     "AWSProfileName": "dev",
     "AWSProfileRegion": "us-west-2",
     "vpc": {
@@ -45,7 +45,7 @@
     }
   },
   "test": {
-    "AWSAccountID": "182732313984",
+    "AWSAccountID": "280619947791",
     "AWSProfileName": "test",
     "AWSProfileRegion": "us-west-2",
     "vpc": {
