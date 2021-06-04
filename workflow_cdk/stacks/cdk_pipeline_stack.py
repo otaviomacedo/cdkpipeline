@@ -65,7 +65,7 @@ class WmpPipelineStack(cdk.Stack):
                 output=source_artifact,
                 oauth_token=SecretValue.secrets_manager('triage'),
                 trigger=codepipeline_actions.GitHubTrigger.POLL,
-                owner="uxth",
+                owner="otaviomacedo",
                 repo="cdkpipeline",
                 branch='main'
             )
